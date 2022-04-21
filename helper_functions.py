@@ -1,4 +1,6 @@
 import os
+import re
+
 from bs4 import BeautifulSoup as Bs
 import requests as r
 from classes import Episode, PodcastFeed
@@ -120,7 +122,6 @@ def create_feed_data(rss_url: str):
 
 
 def check_for_new(rss_url: str):
-    print("\n")
     title = get_title(rss_url)
     podcasts: dict = load_podcasts()
     episode_list: dict = get_episodes(rss_url)
@@ -144,7 +145,7 @@ def make_new_folder(podcast_title: str):
     filepath = path + podcast_title
     try:
         os.mkdir(filepath)
-        print(f"\ncreating folder '{filepath}'")
+        print(f"\nCreating folder: '{filepath}'")
         return filepath
     except OSError:
         pass
@@ -152,7 +153,9 @@ def make_new_folder(podcast_title: str):
 
 
 def download(episode: dict, podcast_title: str):
-    path = make_new_folder(podcast_title) + "\\" + episode.get('title') + ".mp3"
+    episode_title = episode.get('title')
+    episode_title = re.sub(r'\W+', '', episode_title)
+    path = make_new_folder(podcast_title) + "\\" + episode_title + ".mp3"
     url = episode.get('url')
     items = get_downloaded_items()
     if url not in items:
