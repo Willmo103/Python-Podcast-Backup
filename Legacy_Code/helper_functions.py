@@ -3,13 +3,12 @@ import re
 
 from bs4 import BeautifulSoup as Bs
 import requests as r
-from models import Episode, Podcast, DownloadPath
+from classes import Episode, PodcastFeed
 import json
 import shutil
 
 
 def get_title(rss_url: str) -> str:
-    """Takes the rss feed url and returns the title of the podcast"""
     req = r.get(rss_url)
     soup = Bs(req.content, features='xml')
     title: str = soup.find('title').text
